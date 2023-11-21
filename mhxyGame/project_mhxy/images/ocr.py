@@ -1,9 +1,6 @@
-import pytesseract
-import cv2
-from pytesseract import Output
-
-pytesseract.pytesseract.tesseract_cmd = "C:/Program Files/Tesseract-OCR/tesseract.exe"
-
+from aip import AipOcr
+from PIL import ImageGrab
+import time
 
 class Identify():
     """
@@ -14,34 +11,31 @@ class Identify():
     # config = r'-c tessedit_char_whitelist=0123456789 --psm 6'
     # print(pytesseract.image_to_string(img, config=config))
     def __init__(self):
-        self.rect = pytesseract
+        self.APP_ID = '43257106'
+        self.API_KEY = 'B4fzZ7ltiK6TWW3VkOnujO0p'
+        self.SECRET_KEY = 'GaCIaxKPbGLTFsyZMkKNOzKSGxAmCOMY'
 
-    def discern(self, image_path):
-        image = Image.open(image_path).convert("L")
+        self.client = AipOcr(self.APP_ID, self.API_KEY, self.SECRET_KEY)
+
+    def screens(self):
+        # 屏幕截图
+        screen = ImageGrab.grab(bbox=(1090, 310, 1278, 443))  # 指定位置的坐标 (x1, y1) 到 (x2, y2)
         # 进行图像二值化
-        threshold = 116  # 根据实际情况调整阈值
-        binary_image = image.point(lambda p: p > threshold and 255)
-        if image is not None:
-            # cv2.imshow('result', image)
-            # cv2.waitKeyEx(50)
-            # config = r'-c tessedit_char_blacklist=0123456789 --psm 6'
-            text = pytesseract.image_to_string(binary_image, lang='chi_sim')
-            return text
+        screen.save("D:/狂神java/pythoncode/PythonStudy/mhxyGame/project_mhxy/images/saveImg/todo.png")
 
-        else:
-            print('Failed to load image.')
+    def get_file_content(self, filePath):
+        with open(filePath, 'rb') as fp:
+            return fp.read()
+
+    def get_text(self):
+        self.screens()
+        time.sleep(0.5)
+        image = self.get_file_content("D:/狂神java/pythoncode/PythonStudy/mhxyGame/project_mhxy/images/saveImg/todo.png")
+        result = self.client.basicGeneral(image)  # 调用百度OCR的通用文字识别接口
+        for word in result['words_result']:
+            print(word['words'])
 
 
 if __name__ == "__main__":
-    import pytesseract
-    # s = ScreenShot()
-    #
-    # s.shot_everywhere("test")
-    from PIL import Image
-
-    # 打开彩色图像文件并将其转为灰度图像
-
-    # 使用二值图像进行文字识别
-    text = pytesseract.image_to_string(Image.open(r"D:/start/image/6.png"), lang='chi_sim', config='--psm 6')
-
-    print(text)
+    demo = Identify()
+    demo.get_text()

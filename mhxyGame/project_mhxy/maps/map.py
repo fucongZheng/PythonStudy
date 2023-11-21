@@ -15,3 +15,5 @@ class Maps(object):
         self.top_right_corner = top_right_corner
         self.left_lower_corner = left_lower_corner
         self.right_lower_corner = right_lower_corner
+
+
